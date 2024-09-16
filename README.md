@@ -1,6 +1,6 @@
 UBUNTU
 
 
-procedure d'inqtallation
+procedure d'installation
 
 maj: 2024-09-16
