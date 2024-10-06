@@ -1,0 +1,7 @@
+Lancez
+
+  git config --global user.email "philippe.regent@gmail.com
+  git config --global user.name "philippe"
+
+pour régler l'identité par défaut de votre compte.
+Éliminez --global pour ne faire les réglages que dans ce dépôt.
