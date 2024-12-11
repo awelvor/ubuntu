@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ufw</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  </head>
+  <body>
+  <div class="container">
+    <h1>UFW</h1>
+    
+
+
+
+
+<p>       ufw - program for managing a netfilter firewall</p>
+
+<h3>DESCRIPTION</h3>
+<p>       This program is for managing a Linux firewall and aims to provide an easy to use interface for the user.</p>
+
+<p>USAGE</p>
+<p>       ufw [--dry-run] enable|disable|reload</p>
+
+<p>       ufw [--dry-run] default allow|deny|reject [incoming|outgoing|routed]</p>
+
+<p>       ufw [--dry-run] logging on|off|LEVEL</p>
+
+<p>       ufw [--dry-run] reset</p>
+
+<p>       ufw [--dry-run] status [verbose|numbered]</p>
+
+<p>       ufw [--dry-run] show REPORT</p>
+
+<p>       ufw [--dry-run] [delete] [insert NUM] [prepend] allow|deny|reject|limit [in|out] [log|log-all] [ PORT[/PROTOCOL] | APPNAME ] [comment COMMENT]</p>
+
+<p>       ufw [--dry-run] [rule] [delete] [insert NUM] [prepend] allow|deny|reject|limit [in|out [on INTERFACE]] [log|log-all] [proto PROTOCOL] [from ADDRESS [port PORT | app APPNAME</p>
+<p>       ]] [to ADDRESS [port PORT | app APPNAME ]] [comment COMMENT]</p>
+
+<p>       ufw [--dry-run] route [delete] [insert NUM] [prepend] allow|deny|reject|limit [in|out on INTERFACE] [log|log-all] [proto PROTOCOL] [from ADDRESS [port PORT | app APPNAME]]</p>
+<p>       [to ADDRESS [port PORT | app APPNAME]] [comment COMMENT]</p>
+
+<p>       ufw [--dry-run] [--force] delete NUM</p>
+
+<p>       ufw [--dry-run] app list|info|default|update</p>
+
+<h3>OPTIONS</h3>
+<p>       --version              show program's version number and exit</p>
+
+<p>       -h, --help              show help message and exit</p>
+
+<p>       --dry-run              don't modify anything, just show the changes</p>
+
+<p>       enable reloads firewall and enables firewall on boot.</p>
+
+<p>       disable              unloads firewall and disables firewall on boot</p>
+
+<p>       reload reloads firewall</p>
+
+<p>       default allow|deny|reject DIRECTION</p>
+<p>              change the default policy for traffic going DIRECTION, where DIRECTION is one of incoming, outgoing or routed. Note that existing rules will have to be migrated man‐</p>
+<p>              ually when changing the default policy. See RULE SYNTAX for more on deny and reject.</p>
+
+<p>       logging on|off|LEVEL</p>
+<p>              toggle  logging.  Logged  packets use the LOG_KERN syslog facility. Systems configured for rsyslog support may also log to /var/log/ufw.log. Specifying a LEVEL turns              logging on for the specified LEVEL. The default log level is 'low'.  See LOGGING for details.</p>
+
+<p>       reset  Disables and resets firewall to installation defaults. Can also give the --force option to perform the reset without confirmation.</p>
+
+<p>       status show status of firewall and ufw managed rules. Use status verbose for extra information. In the status output, 'Anywhere' is synonymous with 'any', 0.0.0.0/0  (IPv4)              and ::/0 (IPv6). Note that when using status, there is a subtle difference when reporting interfaces. For example, if the following rules are added:</p>
+
+<p>                ufw allow in on eth0 from 192.168.0.0/16</p>
+<p>                ufw allow out on eth1 to 10.0.0.0/8</p>
+<p>                ufw route allow in on eth0 out on eth1 to 10.0.0.0/8 from 192.168.0.0/16</p>
+<p>                ufw limit 2222/tcp comment 'SSH port'</p>
+
+<p>              ufw status will output:</p>
+
+<p>                To                         Action      From</p>
+<p>                --                         ------      ----</p>
+<p>                Anywhere on eth0           ALLOW       192.168.0.0/16</p>
+<p>                10.0.0.0/8                 ALLOW OUT   Anywhere on eth1</p>
+<p>                10.0.0.0/8 on eth1         ALLOW FWD   192.168.0.0/16 on eth0</p>
+<p>                Anywhere                   LIMIT       Anywhere                 # SSH port</p>
+
+<p>              For  the  input and output rules, the interface is reported relative to the firewall system as an endpoint, whereas with route rules, the interface is reported rela‐</p>
+<p>              tive to the direction packets flow through the firewall.</p>
+
+<p>       show REPORT</p>
+<p>              display information about the running firewall. See REPORTS</p>
+
+<p>       allow ARGS</p>
+<p>              add allow rule.  See RULE SYNTAX</p>
+
+<p>       deny ARGS</p>
+<p>              add deny rule.  See RULE SYNTAX</p>
+
+<p>       reject ARGS</p>
+<p>              add reject rule.  See RULE SYNTAX</p>
+
+<p>       limit ARGS</p>
+<p>              add limit rule.  See RULE SYNTAX</p>
+
+<p>       delete RULE|NUM</p>
+<p>              deletes the corresponding RULE</p>
+
+<p>       insert NUM RULE</p>
+<p>              insert the corresponding RULE as rule number NUM</p>
+
+<p>       prepend RULE</p>
+<p>              prepend the corresponding RULE to the top of the ruleset</p>
+
+<h3>RULE SYNTAX</h3>
+<p>       Users can specify rules using either a simple syntax or a full syntax. The simple syntax only specifies the port and optionally the protocol to be allowed or denied on  the</p>
+<p>       host.</p>
+
+<p>       Both syntaxes support specifying a comment for the rule. For existing rules, specifying a different comment updates the comment and specifying '' removes the comment (note,</p>
+<p>       'insert' and 'prepend' cannot be used to update the comment).</p>
+
+<p>       Example rules using the simple syntax:</p>
+
+<p>         ufw allow 53</p>
+
+<p>       This rule will allow tcp and udp port 53 to any address on this host. To specify a protocol, append '/protocol' to the port. For example:</p>
+
+<p>         ufw allow 25/tcp</p>
+
+<p>       This will allow tcp port 25 to any address on this host. ufw will also check /etc/services for the port and protocol if specifying a service by name.  Eg:</p>
+
+<p>         ufw allow smtp</p>
+
+<p>       ufw  supports both ingress and egress filtering and users may optionally specify a direction of either in or out for either incoming or outgoing traffic. If no direction is</p>
+<p>       supplied, the rule applies to incoming traffic. Eg:</p>
+
+<p>         ufw allow in http</p>
+<p>         ufw reject out smtp</p>
+<p>         ufw reject telnet comment 'telnet is unencrypted'</p>
+
+<p>       Users can also use a fuller syntax, specifying the source and destination addresses and ports. This syntax is loosely based on OpenBSD's PF syntax. For example:</p>
+
+<p>         ufw deny proto tcp to any port 80</p>
+
+<p>       This will deny all traffic to tcp port 80 on this host. Another example:</p>
+
+<p>         ufw deny proto tcp from 10.0.0.0/8 to 192.168.0.1 port 25</p>
+
+<p>       This will deny all traffic from the RFC1918 Class A network to tcp port 25 with the address 192.168.0.1.</p>
+
+<p>         ufw deny proto tcp from 2001:db8::/32 to any port 25</p>
+
+<p>       This will deny all traffic from the IPv6 2001:db8::/32 to tcp port 25 on this host. IPv6 must be enabled in /etc/default/ufw for IPv6 firewalling to work.</p>
+
+<p>         ufw deny in on eth0 to 224.0.0.1 proto igmp</p>
+
+<p>       This will deny all igmp traffic to 224.0.0.1 on the eth0 interface.</p>
+
+<p>         ufw allow in on eth0 to 192.168.0.1 proto gre</p>
+
+<p>       This will allow all gre traffic to 192.168.0.1 on the eth0 interface.</p>
+
+<p>         ufw allow proto tcp from any to any port 80,443,8080:8090 comment 'web app'</p>
+
+<p>       The above will allow all traffic to tcp ports 80, 443 and 8080-8090 inclusive and adds a comment for the rule. When specifying multiple ports, the ports list  must  be  nu‐</p>
+<p>       meric,  cannot  contain spaces and must be modified as a whole. Eg, in the above example you cannot later try to delete just the '443' port. You cannot specify more than 15</p>
+<p>       ports (ranges count as 2 ports, so the port count in the above example is 4).</p>
+
+<p>       ufw supports several different protocols. The following are valid in any rule and enabled when the protocol is not specified:</p>
+
+<p>         tcp</p>
+<p>         udp</p>
+
+<p>       The following have certain restrictions and are not enabled when the protocol is not specified:</p>
+
+<p>         ah      valid without port number</p>
+<p>         esp     valid without port number</p>
+<p>         gre     valid without port number</p>
+<p>         vrrp    valid without port number</p>
+<p>         ipv6    valid for IPv4 addresses and without port number</p>
+<p>         igmp    valid for IPv4 addresses and without port number</p>
+
+<p>       Rules for traffic not destined for the host itself but instead for traffic that should be routed/forwarded through the firewall should specify the route keyword before  the</p>
+<p>       rule (routing rules differ significantly from PF syntax and instead take into account netfilter FORWARD chain conventions). For example:</p>
+
+<p>         ufw route allow in on eth1 out on eth2</p>
+
+<p>       This will allow all traffic routed to eth2 and coming in on eth1 to traverse the firewall.</p>
+
+<p>         ufw route allow in on eth0 out on eth1 to 12.34.45.67 port 80 proto tcp</p>
+
+<p>       This rule allows any packets coming in on eth0 to traverse the firewall out on eth1 to tcp port 80 on 12.34.45.67.</p>
+
+<p>       In addition to routing rules and policy, you must also setup IP forwarding.  This may be done by setting the following in /etc/ufw/sysctl.conf:</p>
+
+<p>         net/ipv4/ip_forward=1</p>
+<p>         net/ipv6/conf/default/forwarding=1</p>
+<p>         net/ipv6/conf/all/forwarding=1</p>
+
+<p>       then restarting the firewall:</p>
+
+<p>         ufw disable</p>
+<p>         ufw enable</p>
+
+<p>       Be aware that setting kernel tunables is operating system specific and ufw sysctl settings may be overridden. See the sysctl manual page for details.</p>
+
+<p>       ufw  supports  connection rate limiting, which is useful for protecting against brute-force login attacks. When a limit rule is used, ufw will normally allow the connection</p>
+<p>       but will deny connections if an IP address attempts to initiate 6 or more connections within 30 seconds. See http://www.debian-administration.org/articles/187 for  details.</p>
+<p>       Typical usage is:</p>
+
+<p>         ufw limit ssh/tcp</p>
+
+<p>       Sometimes it is desirable to let the sender know when traffic is being denied, rather than simply ignoring it. In these cases, use reject instead of deny.  For example:</p>
+
+<p>         ufw reject auth</p>
+
+<p>       By  default, ufw will apply rules to all available interfaces. To limit this, specify DIRECTION on INTERFACE, where DIRECTION is one of in or out (interface aliases are not</p>
+<p>       supported).  For example, to allow all new incoming http connections on eth0, use:</p>
+
+<p>         ufw allow in on eth0 to any port 80 proto tcp</p>
+
+<p>       To delete a rule, simply prefix the original rule with delete with or without the rule comment. For example, if the original rule was:</p>
+
+<p>         ufw deny 80/tcp</p>
+
+<p>       Use this to delete it:</p>
+
+<p>         ufw delete deny 80/tcp</p>
+
+<p>       You may also specify the rule by NUM, as seen in the status numbered output. For example, if you want to delete rule number '3', use:</p>
+
+<p>         ufw delete 3</p>
+
+<p>       If you have IPv6 enabled and are deleting a generic rule that applies to both IPv4 and IPv6 (eg 'ufw allow 22/tcp'), deleting by rule number will delete only the  specified</p>
+<p>       rule. To delete both with one command, prefix the original rule with delete.</p>
+
+<p>       To insert a rule, specify the new rule as normal, but prefix the rule with the rule number to insert. For example, if you have four rules, and you want to insert a new rule</p>
+<p>       as rule number three, use:</p>
+
+<p>         ufw insert 3 deny to any port 22 from 10.0.0.135 proto tcp</p>
+
+<p>       Similarly, to add a rule before all other rules matching the rule's IP type, use the prepend rule:</p>
+
+<p>         ufw prepend deny from 1.2.3.4</p>
+
+<p>       This is particularly useful for dynamic firewalls as found in an IPS.  Importantly, if the specified rule is an IPv4 rule, it will be prepended before all other IPv4 rules.</p>
+<p>       If it is an IPv6 rule, it will be prepended before any IPv6 rules.</p>
+
+<p>       To see a list of numbered rules, use:</p>
+
+<p>         ufw status numbered</p>
+
+<p>       ufw  supports per rule logging. By default, no logging is performed when a packet matches a rule. Specifying log will log all new connections matching the rule, and log-all</p>
+<p>       will log all packets matching the rule.  For example, to allow and log all new ssh connections, use:</p>
+
+<p>         ufw allow log 22/tcp</p>
+
+<p>       See LOGGING for more information on logging.</p>
+
+<h3>EXAMPLES</h3>
+<p>       Deny all access to port 53:</p>
+
+<p>         ufw deny 53</p>
+
+<p>       Allow all access to tcp port 80:</p>
+
+<p>         ufw allow 80/tcp</p>
+
+<p>       Allow all access from RFC1918 networks to this host:</p>
+
+<p>         ufw allow from 10.0.0.0/8</p>
+<p>         ufw allow from 172.16.0.0/12</p>
+<p>         ufw allow from 192.168.0.0/16</p>
+
+<p>       Deny access to udp port 514 from host 1.2.3.4:</p>
+
+<p>         ufw deny proto udp from 1.2.3.4 to any port 514</p>
+
+<p>       Allow access to udp 1.2.3.4 port 5469 from 1.2.3.5 port 5469:</p>
+
+<p>         ufw allow proto udp from 1.2.3.5 port 5469 to 1.2.3.4 port 5469</p>
+
+<h3>REMOTE MANAGEMENT</h3>
+<p>       When running ufw enable or starting ufw via its initscript, ufw will flush its chains. This is required so ufw can maintain a consistent state, but  it  may  drop  existing</p>
+<p>       connections (eg ssh). ufw does support adding rules before enabling the firewall, so administrators can do:</p>
+
+<p>         ufw allow proto tcp from any to any port 22</p>
+
+<p>       before  running  'ufw  enable'. The rules will still be flushed, but the ssh port will be open after enabling the firewall. Please note that once ufw is 'enabled', ufw will</p>
+<p>       not flush the chains when adding or removing rules (but will when modifying a rule or changing the default policy). By default, ufw will prompt when enabling  the  firewall</p>
+<p>       while running under ssh. This can be disabled by using 'ufw --force enable'.</p>
+
+<h3>APPLICATION INTEGRATION</h3>
+<p>       ufw supports application integration by reading profiles located in /etc/ufw/applications.d. To list the names of application profiles known to ufw, use:</p>
+
+<p>         ufw app list</p>
+
+<p>       Users can specify an application name when adding a rule (quoting any profile names with spaces). For example, when using the simple syntax, users can use:</p>
+
+<p>         ufw allow <name></p>
+
+<p>       Or for the extended syntax:</p>
+
+<p>         ufw allow from 192.168.0.0/16 to any app <name></p>
+
+<p>       You should not specify the protocol with either syntax, and with the extended syntax, use app in place of the port clause.</p>
+
+<p>       Details on the firewall profile for a given application can be seen with:</p>
+
+<p>         ufw app info <name></p>
+
+<p>       where '<name>' is one of the applications seen with the app list command.  Users may also specify all to see the profiles for all known applications.</p>
+
+<p>       Syntax for the application profiles is a simple .INI format:</p>
+
+<p>         [<name>]</p>
+<p>         title=<title></p>
+<p>         description=<description></p>
+<p>         ports=<ports></p>
+
+<p>       The  'ports'  field  may  specify a '|'-separated list of ports/protocols where the protocol is optional. A comma-separated list or a range (specified with 'start:end') may</p>
+<p>       also be used to specify multiple ports, in which case the protocol is required. For example:</p>
+
+<p>         [SomeService]</p>
+<p>         title=Some title</p>
+<p>         description=Some description</p>
+<p>         ports=12/udp|34|56,78:90/tcp</p>
+
+<p>       In the above example, 'SomeService' may be used in app rules and it specifies UDP port 12, TCP and UDP on port 34 and TCP ports 56 and 78-90 inclusive.</p>
+
+<p>       After creating or editing an application profile, users can run:</p>
+
+<p>         ufw app update <name></p>
+
+<p>       This command will automatically update the firewall with updated profile information. If specify 'all' for name, then all the profiles will be updated.  To update a profile       and add a new rule to the firewall automatically, users can run:</p>
+
+<p>         ufw app update --add-new <name></p>
+
+<p>       The behavior of the update --add-new command can be configured using:</p>
+
+<p>         ufw app default <policy></p>
+
+<p>       The default application policy is skip, which means that the update --add-new command will do nothing. Users may also specify a policy  of  allow  or  deny  so  the  update       --add-new  command  may automatically update the firewall.  WARNING: it may be a security to risk to use a default allow policy for application profiles. Carefully consider       the security ramifications before using a default allow policy.</p>
+
+<h3>LOGGING</h3>
+<p>       ufw supports multiple logging levels. ufw defaults to a loglevel of 'low' when a loglevel is not specified. Users may specify a loglevel with:</p>
+
+<p>         ufw logging LEVEL</p>
+
+<p>       LEVEL may be 'off', 'low', 'medium', 'high' and 'full'. Log levels are defined as:</p>
+
+<p>       off    disables ufw managed logging</p>
+
+<p>       low    logs all blocked packets not matching the defined policy (with rate limiting), as well as packets matching logged rules</p>
+
+<p>       medium log level low, plus all allowed packets not matching the defined policy, all INVALID packets, and all new connections.  All logging is done with rate limiting.</p>
+
+<p>       high   log level medium (without rate limiting), plus all packets with rate limiting</p>
+
+<p>       full   log level high without rate limiting</p>
+
+<p>       Loglevels above medium generate a lot of logging output, and may quickly fill up your disk. Loglevel medium may generate a lot of logging output on a busy system.</p>
+
+<p>       Specifying 'on' simply enables logging at log level 'low' if logging is currently not enabled.</p>
+
+<h3>REPORTS</h3>
+<p>       The following reports are supported. Each is based on the live system and with the exception of the listening report, is in raw iptables format:</p>
+
+<p>         raw</p>
+<p>         builtins</p>
+<p>         before-rules</p>
+<p>         user-rules</p>
+<p>         after-rules</p>
+<p>         logging-rules</p>
+<p>         listening</p>
+<p>         added</p>
+
+<p>       The raw report shows the complete firewall, while the others show a subset of what is in the raw report.</p>
+
+<p>       The listening report will display the ports on the live system in the listening state for tcp and the open state for udp, along with the address of the  interface  and  the</p>
+<p>       executable listening on the port. An '*' is used in place of the address of the interface when the executable is bound to all interfaces on that port. Following this infor‐</p>
+<p>       mation  is  a  list of rules which may affect connections on this port. The rules are listed in the order they are evaluated by the kernel, and the first match wins. Please</p>
+<p>       note that the default policy is not listed and tcp6 and udp6 are shown only if IPV6 is enabled.</p>
+
+<p>       The added report displays the list of rules as they were added on the command-line. This report does not show the status of the running firewall (use 'ufw status' instead).</p>
+<p>       Because rules are normalized by ufw, rules may look different than the originally added rule. Also, ufw does not record command ordering, so an equivalent ordering is  used</p>
+<p>       which lists IPv6-only rules after other rules.</p>
+
+<h3>NOTES</h3>
+<p>       On  installation,  ufw  is disabled with a default incoming policy of deny, a default forward policy of deny, and a default outgoing policy of allow, with stateful tracking</p>
+<p>       for NEW connections for incoming and forwarded connections.  In addition to the above, a default ruleset is put in place that does the following:</p>
+
+<p>       - DROP packets with RH0 headers</p>
+
+<p>       - DROP INVALID packets</p>
+
+<p>       - ACCEPT certain icmp packets (INPUT and FORWARD): destination-unreachable, source-quench, time-exceeded, parameter-problem, and echo-request for IPv4. destination-unreach‐</p>
+<p>       able, packet-too-big, time-exceeded, parameter-problem, and echo-request for IPv6.</p>
+
+<p>       - ACCEPT icmpv6 packets for stateless autoconfiguration (INPUT)</p>
+
+<p>       - ACCEPT ping replies from IPv6 link-local (ffe8::/10) addresses (INPUT)</p>
+
+<p>       - ACCEPT DHCP client traffic (INPUT)</p>
+
+<p>       - DROP non-local traffic (INPUT)</p>
+
+<p>       - ACCEPT mDNS (zeroconf/bonjour/avahi 224.0.0.251 for IPv4 and ff02::fb for IPv6) for service discovery (INPUT)</p>
+
+<p>       - ACCEPT UPnP (239.255.255.250 for IPv4 and ff02::f for IPv6) for service discovery (INPUT)</p>
+
+<p>       Rule ordering is important and the first match wins. Therefore when adding rules, add the more specific rules first with more general rules later.</p>
+
+<p>       ufw is not intended to provide complete firewall functionality via its command interface, but instead provides an easy way to add or remove simple rules.</p>
+
+<p>       The status command shows basic information about the state of the firewall, as well as rules managed via the ufw command. It does not show rules from  the  rules  files  in</p>
+<p>       /etc/ufw. To see the complete state of the firewall, users can ufw show raw.  This displays the filter, nat, mangle and raw tables using:</p>
+
+<p>         iptables -n -L -v -x -t <table></p>
+<p>         ip6tables -n -L -v -x -t <table></p>
+
+<p>       See the iptables and ip6tables documentation for more details.</p>
+
+<p>       If the default policy is set to REJECT, ufw may interfere with rules added outside of the ufw framework. See README for details.</p>
+
+<p>       IPV6 is allowed by default. To change this behavior to only accept IPv6 traffic on the loopback interface, set IPV6 to 'no' in /etc/default/ufw and reload ufw. When IPv6 is</p>
+<p>       enabled, you may specify rules in the same way as for IPv4 rules, and they will be displayed with ufw status. Rules that match both IPv4 and IPv6 addresses apply to both IP</p>
+<p>       versions. For example, when IPv6 is enabled, the following rule will allow access to port 22 for both IPv4 and IPv6 traffic:</p>
+
+<p>         ufw allow 22</p>
+
+<p>       IPv6 over IPv4 tunnels and 6to4 are supported by using the 'ipv6' protocol ('41'). This protocol can only be used with the full syntax. For example:</p>
+
+<p>         ufw allow to 10.0.0.1 proto ipv6</p>
+<p>         ufw allow to 10.0.0.1 from 10.4.0.0/16 proto ipv6</p>
+
+<p>       IPSec is supported by using the 'esp' ('50') and 'ah' ('51') protocols. These protocols can only be used with the full syntax. For example:</p>
+
+<p>         ufw allow to 10.0.0.1 proto esp</p>
+<p>         ufw allow to 10.0.0.1 from 10.4.0.0/16 proto esp</p>
+<p>         ufw allow to 10.0.0.1 proto ah</p>
+<p>         ufw allow to 10.0.0.1 from 10.4.0.0/16 proto ah</p>
+
+<p>       keepalived is supported by using the 'vrrp' ('112') protocol. This protocol can only be used with the full syntax. For example:</p>
+
+<p>         ufw allow to 224.0.0.0/24 from 10.0.0.1 proto vrrp</p>
+
+<p>       In addition to the command-line interface, ufw also provides a framework which allows administrators to modify default behavior as well as take full advantage of netfilter.</p>
+<p>       See the ufw-framework manual page for more information.</p>
+
+<h3>SEE ALSO</h3>
+<p>       ufw-framework(8), iptables(8), ip6tables(8), iptables-restore(8), ip6tables-restore(8), sysctl(8), sysctl.conf(5)</p>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>
