@@ -1,0 +1,42 @@
+RubyGems Environment:
+  - RUBYGEMS VERSION: 3.4.20
+  - RUBY VERSION: 3.2.3 (2024-01-18 patchlevel 157) [x86_64-linux-gnu]
+  - INSTALLATION DIRECTORY: /home/philippe/gems
+  - USER INSTALLATION DIRECTORY: /home/philippe/.local/share/gem/ruby/3.2.0
+  - RUBY EXECUTABLE: /usr/bin/ruby3.2
+  - GIT EXECUTABLE: /usr/bin/git
+  - EXECUTABLE DIRECTORY: /home/philippe/gems/bin
+  - SPEC CACHE DIRECTORY: /home/philippe/.local/share/gem/specs
+  - SYSTEM CONFIGURATION DIRECTORY: /etc
+  - RUBYGEMS PLATFORMS:
+     - ruby
+     - x86_64-linux-gnu
+  - GEM PATHS:
+     - /home/philippe/gems
+     - /home/philippe/.local/share/gem/ruby/3.2.0
+     - /var/lib/gems/3.2.0
+     - /usr/local/lib/ruby/gems/3.2.0
+     - /usr/lib/ruby/gems/3.2.0
+     - /usr/lib/x86_64-linux-gnu/ruby/gems/3.2.0
+     - /usr/share/rubygems-integration/3.2.0
+     - /usr/share/rubygems-integration/all
+     - /usr/lib/x86_64-linux-gnu/rubygems-integration/3.2.0
+  - GEM CONFIGURATION:
+     - :update_sources => true
+     - :verbose => true
+     - :backtrace => true
+     - :bulk_threshold => 1000
+  - REMOTE SOURCES:
+     - https://rubygems.org/
+  - SHELL PATH:
+     - /home/philippe/gems/bin
+     - /usr/local/sbin
+     - /usr/local/bin
+     - /usr/sbin
+     - /usr/bin
+     - /sbin
+     - /bin
+     - /usr/games
+     - /usr/local/games
+     - /snap/bin
+     - /snap/bin
