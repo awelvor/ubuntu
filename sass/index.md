@@ -1,5 +1,5 @@
-Compile Sass to CSS.
-
+> Compile Sass to CSS.
+````
 Usage: sass <input.scss> [output.css]
        sass <input.scss>:<output.css> <input/>:<output/> <dir/>
 
